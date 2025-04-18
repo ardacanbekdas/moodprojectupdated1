@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mood Based Music</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --main-color: #116062;
+      --button-hover: #0d4d4f;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--main-color);
+      overflow-x: hidden;
+      position: relative;
+    }
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, #116062, #10a5a8, #1fabd3, #116062);
+      background-size: 200% 200%;
+      animation: gradientAnimation 5s linear infinite;
+      z-index: -1;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .form-container {
+      background-color: white;
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+    .form-container select,
+    .form-container button {
+      font-size: 1.6rem;
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 10px;
+    }
+    .form-container button {
+      background-color: var(--main-color);
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: var(--button-hover);
+    }
+    .songs-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    .songs-container h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .songs-container ul {
+      list-style: none;
+      padding: 0;
+    }
+    .songs-container ul li {
+      font-size: 1.5rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .songs-container a {
+      color: #1d4ed8;
+      text-decoration: none;
+    }
+    .songs-container a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+
+  <header>
+    <h1 class="text-white text-3xl font-bold">🎧 Ruh Haline Göre Müzik Önerisi</h1>
+  </header>
+
+  <main class="main">
+    <div class="form-container">
+      <form method="POST" action="/static">
+        <label for="mood">Bugünkü ruh haliniz:</label>
+        <select name="mood" id="mood">
+          <option value="mutlu">Mutlu 😊</option>
+          <option value="üzgün">Üzgün 😢</option>
+          <option value="sakin">Sakin 😌</option>
+          <option value="enerjik">Enerjik ⚡</option>
+          <option value="romantik">Romantik 💖</option>
+          <option value="yaz">Yaz ☀</option>
+        </select>
+        <button type="submit">ŞARKI ÖNER</button>
+      </form>
+    </div>
+
+    {% if songs %}
+    <div class="songs-container">
+      <h2>Önerilen Şarkılar</h2>
+      <ul>
+        {% for song in songs %}
+        <li>
+          <a href="{{ song.spotify_link }}" target="_blank">
+            {{ song.track_name }} - {{ song.track_artist }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </main>
+</body>
+</html>

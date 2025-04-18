@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruh Hali veya Türe Göre Müzik Seç</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #0b0c2a, #1a1b3d);
+    }
+    .card {
+      background-color: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white font-sans">
+
+  <!-- Favori Şarkılarım Butonu -->
+  <div class="text-center py-6">
+    <a href="{{ url_for('favorites') }}" class="bg-green-600 hover:bg-green-500 py-2 px-6 rounded-full text-white font-semibold">
+      Favori Şarkılarım
+    </a>
+  </div>
+
+  <nav class="flex justify-between items-center px-10 py-6">
+    <div class="text-2xl font-bold tracking-tight">🎧 MoodPalette</div>
+    <ul class="flex space-x-6 text-sm font-medium text-gray-300">
+      <li><a href="/home" class="hover:text-white">Anasayfa</a></li>
+      <li><a href="/face" class="hover:text-white">Yüz Analizi</a></li>
+      {% if session.get('username') %}
+        <li class="text-green-400 font-semibold">Hoş geldin, {{ session['username'] }}</li>
+        <li><a href="/logout" class="hover:text-red-400">Çıkış Yap</a></li>
+      {% else %}
+        <li><a href="/login" class="hover:text-white">Giriş Yap</a></li>
+        <li><a href="/register" class="hover:text-white">Kayıt Ol</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <header class="text-center py-12">
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-white">Müzik Ruhunun Gıdasıysa, Doğru Yerden Başlıyorsun</h1>
+    <p class="text-md text-gray-400">Dilersen ruh haline, dilersen türüne göre senin için en iyi şarkıları seçelim.</p>
+  </header>
+
+  <section class="text-center mt-10">
+    <h2 class="text-3xl font-bold text-white mb-8">🎭 Ruh Haline Göre Müzik</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-20 max-w-7xl mx-auto">
+      {% for mood, emoji in moods.items() %}
+      <a href="/recommendation?mood={{ mood }}">
+        <div class="card rounded-3xl p-8 flex flex-col items-center text-center hover:bg-opacity-10">
+          <div class="text-6xl mb-4">{{ emoji }}</div>
+          <h2 class="text-xl font-semibold mb-2 text-white">{{ mood|capitalize }}</h2>
+          <p class="text-sm text-gray-400 mb-4">Bu ruh haline uygun şarkılar seni bekliyor.</p>
+          <button class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-full font-medium text-sm">
+            Şarkıları Gör
+          </button>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="text-center mt-10">
+    <h2 class="text-3xl font-bold text-white mb-8">🎵 Müzik Türüne Göre Seç</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-20 max-w-7xl mx-auto">
+      {% set genre_emojis = {
+        "pop": "🎤",
+        "rap": "🎙️",
+        "rock": "🎸",
+        "latin": "🪇",
+        "electronic": "🪩",
+        "blues": "🎼"
+      } %}
+      {% for genre in genres %}
+        {% set normalized = genre.lower() %}
+        {% if normalized == 'edm' %}
+          {% set display_genre = 'electronic' %}
+        {% elif normalized == 'r&b' %}
+          {% set display_genre = 'blues' %}
+        {% else %}
+          {% set display_genre = normalized %}
+        {% endif %}
+        {% if display_genre in genre_emojis %}
+        <a href="/recommendation?genre={{ genre }}">
+          <div class="card rounded-3xl p-8 flex flex-col items-center text-center hover:bg-opacity-10">
+            <div class="text-6xl mb-4">{{ genre_emojis[display_genre] }}</div>
+            <h2 class="text-xl font-semibold mb-2 text-white">{{ display_genre|capitalize }}</h2>
+            <p class="text-sm text-gray-400 mb-4">Bu türe uygun şarkılar seni bekliyor.</p>
+            <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-medium text-sm">
+              Şarkıları Gör
+            </button>
+          </div>
+        </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+</body>
+</html>

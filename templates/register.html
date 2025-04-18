@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kayıt Ol</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <form method="POST" class="bg-gray-800 p-8 rounded-xl shadow-md space-y-4 w-80">
+    <h2 class="text-xl font-bold">Kayıt Ol</h2>
+    <input type="text" name="username" placeholder="Kullanıcı Adı" required class="w-full p-2 rounded text-black">
+    <input type="email" name="email" placeholder="E-posta" required class="w-full p-2 rounded text-black">
+    <input type="password" name="password" placeholder="Şifre" required class="w-full p-2 rounded text-black">
+    <button type="submit" class="w-full bg-green-600 hover:bg-green-500 py-2 rounded text-white">Kayıt Ol</button>
+    <p class="text-sm text-gray-400">Zaten hesabın var mı? <a href="/login" class="text-blue-400">Giriş Yap</a></p>
+  </form>
+</body>
+</html>
