@@ -6,4 +6,5 @@ Bu satır, otomatik yedekleme test commitidir.
 Bu satır otomatik yedekleme testi için eklendi.
 Bu satır otomatik yedekleme testidir 🚀
 Bu bir test commitidir.
-asdvasg
+
+# Bu satır test amaçlı eklendi.
