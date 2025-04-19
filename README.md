@@ -8,3 +8,4 @@ Bu satır otomatik yedekleme testidir 🚀
 Bu bir test commitidir.
 
 # Bu satır test amaçlı eklendi.
+1
