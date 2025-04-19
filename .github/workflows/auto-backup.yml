@@ -13,14 +13,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set backup branch name
-        id: vars
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d-%H%M")
           echo "BRANCH=backup-$TIMESTAMP" >> $GITHUB_ENV
 
-      - name: Create backup branch and push
+      - name: Push backup branch
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git checkout -b $BRANCH
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
           git push origin $BRANCH
