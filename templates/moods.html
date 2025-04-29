@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -5,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ruh Hali veya Türe Göre Müzik Seç</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     body {
-      background: linear-gradient(to bottom right, #0b0c2a, #1a1b3d);
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .card {
       background-color: rgba(255, 255, 255, 0.02);
@@ -21,7 +24,15 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-white font-sans">
+<body class="min-h-screen text-white font-sans" style="position: relative;">
+  <!-- Arka plan GIF -->
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: url('/static/images/wave-background.gif') no-repeat center center fixed;
+    background-size: cover; z-index: -1;"></div>
+  <!-- Alt fade -->
+  <div style="position: fixed; bottom: 0; left: 0; height: 150px; width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    pointer-events: none; z-index: 0;"></div>
 
   <!-- Favori Şarkılarım Butonu -->
   <div class="text-center py-6">
@@ -47,7 +58,7 @@
 
   <header class="text-center py-12">
     <h1 class="text-4xl sm:text-5xl font-bold mb-4 text-white">Müzik Ruhunun Gıdasıysa, Doğru Yerden Başlıyorsun</h1>
-    <p class="text-md text-gray-400">Dilersen ruh haline, dilersen türüne göre senin için en iyi şarkıları seçelim.</p>
+    <p class="text-md text-gray-300">Dilersen ruh haline, dilersen türüne göre senin için en iyi şarkıları seçelim.</p>
   </header>
 
   <section class="text-center mt-10">
@@ -58,7 +69,7 @@
         <div class="card rounded-3xl p-8 flex flex-col items-center text-center hover:bg-opacity-10">
           <div class="text-6xl mb-4">{{ emoji }}</div>
           <h2 class="text-xl font-semibold mb-2 text-white">{{ mood|capitalize }}</h2>
-          <p class="text-sm text-gray-400 mb-4">Bu ruh haline uygun şarkılar seni bekliyor.</p>
+          <p class="text-sm text-gray-300 mb-4">Bu ruh haline uygun şarkılar seni bekliyor.</p>
           <button class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-full font-medium text-sm">
             Şarkıları Gör
           </button>
@@ -72,12 +83,8 @@
     <h2 class="text-3xl font-bold text-white mb-8">🎵 Müzik Türüne Göre Seç</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-20 max-w-7xl mx-auto">
       {% set genre_emojis = {
-        "pop": "🎤",
-        "rap": "🎙️",
-        "rock": "🎸",
-        "latin": "🪇",
-        "electronic": "🪩",
-        "blues": "🎼"
+        "pop": "🎤", "rap": "🎙️", "rock": "🎸", "latin": "🪇",
+        "electronic": "🪩", "blues": "🎼"
       } %}
       {% for genre in genres %}
         {% set normalized = genre.lower() %}
@@ -93,7 +100,7 @@
           <div class="card rounded-3xl p-8 flex flex-col items-center text-center hover:bg-opacity-10">
             <div class="text-6xl mb-4">{{ genre_emojis[display_genre] }}</div>
             <h2 class="text-xl font-semibold mb-2 text-white">{{ display_genre|capitalize }}</h2>
-            <p class="text-sm text-gray-400 mb-4">Bu türe uygun şarkılar seni bekliyor.</p>
+            <p class="text-sm text-gray-300 mb-4">Bu türe uygun şarkılar seni bekliyor.</p>
             <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-medium text-sm">
               Şarkıları Gör
             </button>
