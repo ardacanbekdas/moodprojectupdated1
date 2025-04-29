@@ -1,12 +1,19 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from authlib.integrations.flask_client import OAuth
+from flask_session import Session
 import pandas as pd
 import sqlite3
 import os
 import webbrowser
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
-app.secret_key = "your_secret_key"
+app.secret_key = 'super-secret-spotify-key'
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+
+oauth = OAuth(app)
+
 
 # CSV verisi
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -199,6 +206,121 @@ def favorite():
     return redirect(request.referrer)  # Kullanıcıyı tekrar bulunduğu sayfaya yönlendir
 
 
+
+oauth.register(
+    name='google',
+    client_id='72352510959-11a06nrsogchgpgir6tjkemmn2k7hv70.apps.googleusercontent.com',
+    client_secret='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',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
+
+
+
+
+oauth.register(
+    name='spotify',
+    client_id='a57417011dcb4b98b7445ffc453b27d0',
+    client_secret='ce2cbac13ecf4f26acc82bd5a76306ce',
+    access_token_url='https://accounts.spotify.com/api/token',
+    authorize_url='https://accounts.spotify.com/authorize',
+    api_base_url='https://api.spotify.com/v1/',
+    client_kwargs={'scope': 'user-read-email'}
+)
+
+
+@app.route('/login/google')
+def login_google():
+    redirect_uri = url_for('authorize_google', _external=True)
+
+    # nonce'i session'a koyuyoruz
+    from uuid import uuid4
+    session['nonce'] = uuid4().hex
+
+    return oauth.google.authorize_redirect(redirect_uri, nonce=session['nonce'])
+
+
+@app.route('/authorize/google')
+def authorize_google():
+    token = oauth.google.authorize_access_token()
+
+    # nonce kontrolü burada
+    user_info = oauth.google.parse_id_token(token, nonce=session.get('nonce'))
+
+    email = user_info['email']
+    name = user_info.get('name', 'GoogleUser')
+
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+
+    if not user:
+        cursor.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+                       (name, email, 'oauth'))
+        conn.commit()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+
+    conn.close()
+
+    session['user_id'] = user[0]
+    session['username'] = user[1]
+
+    return redirect(url_for('home'))
+
+
+# Favori şarkıyı silme
+@app.route('/delete_favorite/<int:song_id>', methods=['GET'])
+def delete_favorite(song_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM favorites WHERE id = ? AND user_id = ?", (song_id, session['user_id']))
+    conn.commit()
+    conn.close()
+    flash("Şarkı favorilerden kaldırıldı!", "success")
+    return redirect(url_for('favorites'))
+
+
+@app.route('/login/spotify')
+def login_spotify():
+    redirect_uri = url_for('authorize_spotify', _external=True)
+    return oauth.spotify.authorize_redirect(redirect_uri)
+
+@app.route('/authorize/spotify')
+def authorize_spotify():
+    token = oauth.spotify.authorize_access_token()
+    resp = oauth.spotify.get('me')
+    profile = resp.json()
+
+    email = profile.get('email', f"{profile['id']}@spotify.com")  # Spotify bazen email vermez
+    name = profile.get('display_name', 'SpotifyUser')
+
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+
+    if not user:
+        cursor.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+                       (name, email, 'oauth'))
+        conn.commit()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+
+    conn.close()
+
+    session['user_id'] = user[0]
+    session['username'] = user[1]
+
+    return redirect(url_for('home'))
+
 if __name__ == '__main__':
+    import webbrowser
     webbrowser.open("http://127.0.0.1:5050/")
     app.run(debug=True, port=5050, use_reloader=False)

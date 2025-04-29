@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Yüz İfadesine Göre Şarkı Öner</title>
   <script src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
     body {
       background-color: #0b0c2a;
@@ -87,5 +88,12 @@
       };
     });
   </script>
+  <div class="text-center mt-10">
+    <a href="/home">
+      <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-semibold text-sm">
+        Ana Sayfaya Dön
+      </button>
+    </a>
+  </div>
 </body>
 </html>

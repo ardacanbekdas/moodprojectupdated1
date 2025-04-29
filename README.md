@@ -6,5 +6,5 @@ Bu satır, otomatik yedekleme test commitidir.
 Bu satır otomatik yedekleme testi için eklendi.
 Bu satır otomatik yedekleme testidir 🚀
 Bu bir test commitidir.
+Bu satır test amaçlı eklenedi.
 
-# Bu satır test amaçlı eklendi.
