@@ -28,8 +28,24 @@
             Spotify'da Dinle
           </button>
         </a>
+
+        <!-- Silme Butonu -->
+        <form action="{{ url_for('delete_favorite', song_id=fav[0]) }}" method="GET" class="mt-4">
+          <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-full font-semibold text-sm">
+            Sil
+          </button>
+        </form>
       </div>
     {% endfor %}
+  </div>
+
+  <!-- Ana Sayfaya Dön Butonu -->
+  <div class="text-center mt-10">
+    <a href="/home">
+      <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-semibold text-sm">
+        Ana Sayfaya Dön
+      </button>
+    </a>
   </div>
 </body>
 </html>
